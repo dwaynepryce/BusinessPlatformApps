@@ -92,8 +92,8 @@ namespace Microsoft.Deployment.Tests.Actions.AzureTests
 
             var dataStore = await TestManager.GetDataStore();
             var azureToken = dataStore.GetJson("AzureToken")["access_token"].ToString();
-            var subscription = "c6a33fd3-e442-48a4-b82d-bcc4ad8a71d7";
-            var resourceGroup = "Api-Default-West-US";//dataStore.GetValue("SelectedResourceGroup");
+            var subscription = "";
+            var resourceGroup = "mcleanTestMachineLearning";//dataStore.GetValue("SelectedResourceGroup");
 
             ServiceClientCredentials creds = new TokenCredentials(azureToken);
             AzureMLWebServicesManagementClient client = new AzureMLWebServicesManagementClient(creds);
@@ -104,8 +104,11 @@ namespace Microsoft.Deployment.Tests.Actions.AzureTests
             foreach (var webserviceName in webservices)
             {
                 var webservice = await client.WebServices.GetAsync(resourceGroup, webserviceName.Name);
-                var str = ModelsSerializationUtil.GetAzureMLWebServiceDefinitionJsonFromObject(webservice);
-                System.IO.File.WriteAllText(webserviceName.Name.Replace(".", "").Replace(":", "") + "FFTWebService.json", str);
+                if (webservice.Name.StartsWith("RedditProcessDoc"))
+                {
+                    var str = ModelsSerializationUtil.GetAzureMLWebServiceDefinitionJsonFromObject(webservice);
+                    System.IO.File.WriteAllText(webserviceName.Name.Replace(".", "").Replace(":", "") + "RedditWebService.json", str);
+                }
             }
         }
 
